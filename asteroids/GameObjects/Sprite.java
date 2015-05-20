@@ -1,5 +1,7 @@
 package asteroids.GameObjects;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Polygon;
 
 public class Sprite 
@@ -13,12 +15,21 @@ public class Sprite
 		this.sprite = new Polygon();
 	}
 
-	public void draw(double x, double y, double angle, int width, int height) 
+	public void draw(double x, double y, double angle, int width, int height, Graphics buffer) 
 	{
 		this.sprite = new Polygon();
 		for (int i = 0; i < this.base.npoints; i++)
 			this.sprite.addPoint((int) Math.round(this.base.xpoints[i] * Math.cos(angle) + this.base.ypoints[i] * Math.sin(angle)) + (int) Math.round(x) + width / 2,
 					(int) Math.round(this.base.ypoints[i] * Math.cos(angle) - this.base.xpoints[i] * Math.sin(angle)) + (int) Math.round(y) + height / 2);
+
+
+		buffer.setColor(Color.black);
+		buffer.fillPolygon(sprite);
+		buffer.setColor(Color.white);
+		buffer.drawPolygon(sprite);
+		buffer.drawLine(sprite.xpoints[sprite.npoints - 1], sprite.ypoints[sprite.npoints - 1],
+				sprite.xpoints[0], sprite.ypoints[0]);
+
 	}
 
 	public boolean isColliding(Sprite s) 
@@ -31,9 +42,9 @@ public class Sprite
 				return true;
 		return false;
 	}
-	
+
 	public Polygon getSprite(){ return sprite; }
-	
+
 	public void addPoint(int x, int y)
 	{
 		this.base.addPoint(x, y);

@@ -1,5 +1,7 @@
 package asteroids.GameObjects;
 
+import java.awt.Graphics;
+
 public class GameObject 
 {
 	public static int width, height;
@@ -8,6 +10,7 @@ public class GameObject
 	protected double  angSpeed;
 	protected double  x, y;
 	protected double  xspeed, yspeed;
+	protected double friction = 1;
 	protected Sprite objSprite;
 	
 	public GameObject()
@@ -28,8 +31,12 @@ public class GameObject
 			this.angle += 2 * Math.PI;
 		if (this.angle > 2 * Math.PI)
 			this.angle -= 2 * Math.PI;
+
 		wrapped = false;
+
+		this.xspeed *= this.friction;
 		this.x += this.xspeed;
+
 		if (this.x < -width / 2) {
 			this.x += width;
 			wrapped = true;
@@ -38,7 +45,10 @@ public class GameObject
 			this.x -= width;
 			wrapped = true;
 		}
+
+		this.yspeed *= this.friction;
 		this.y -= this.yspeed;
+
 		if (this.y < -height / 2) {
 			this.y += height;
 			wrapped = true;
@@ -51,9 +61,9 @@ public class GameObject
 		return wrapped;
 	}
 	
-	public void draw()
+	public void draw(Graphics buffer)
 	{
-		this.objSprite.draw(x, y, angle, width, height);
+		this.objSprite.draw(x, y, angle, width, height, buffer);
 	}
 	
 	public boolean checkCollision(GameObject obj)
@@ -66,4 +76,6 @@ public class GameObject
 	public double getX(){return x;}
 	public double getY(){return y;}
 	public double getAng(){return angle;}
+	public double getXspeed(){return xspeed;}
+	public double getYspeed(){return yspeed;}
 }

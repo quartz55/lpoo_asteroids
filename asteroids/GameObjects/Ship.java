@@ -2,10 +2,10 @@ package asteroids.GameObjects;
 
 public class Ship extends GameObject{
 
-	private final double SHIP_ANGLE_STEP = 0.01;
-	private final double SHIP_SPEED_STEP = 0.01;
+	private final double SHIP_ANGLE_STEP = 0.02;
+	private final double SHIP_SPEED_STEP = 0.06;
 	private final double MAX_SHIP_SPEED  = 3;
-	
+
 	private boolean alive;
 
 	public Ship()
@@ -15,6 +15,7 @@ public class Ship extends GameObject{
 		objSprite.addPoint(7, 10);
 		objSprite.addPoint(-7, 10);
 		alive = true;
+		this.friction = 0.995;
 	}
 
 	public void rotLeft()
@@ -33,11 +34,6 @@ public class Ship extends GameObject{
 	{
 		double dx = SHIP_SPEED_STEP * -Math.sin(angle);
 		double dy = SHIP_SPEED_STEP *  Math.cos(angle);
-		double speed = Math.sqrt(xspeed * xspeed + yspeed * yspeed);
-		if (speed > MAX_SHIP_SPEED) {
-			dx = MAX_SHIP_SPEED * -Math.sin(angle);
-			dy = MAX_SHIP_SPEED *  Math.cos(angle);
-		}
 		xspeed += dx;
 		yspeed += dy;
 	}
@@ -46,15 +42,10 @@ public class Ship extends GameObject{
 
 		double dx = SHIP_SPEED_STEP * -Math.sin(angle);
 		double dy = SHIP_SPEED_STEP *  Math.cos(angle);
-		double speed = Math.sqrt(xspeed * xspeed + yspeed * yspeed);
-		if (speed > MAX_SHIP_SPEED) {
-			dx = MAX_SHIP_SPEED * -Math.sin(angle);
-			dy = MAX_SHIP_SPEED *  Math.cos(angle);
-		}
 		xspeed -= dx;
 		yspeed -= dy;
 	}
-	
+
 	public boolean isAlive(){return alive;}
 	public void setAlive(boolean alive){this.alive = alive;}
 }
