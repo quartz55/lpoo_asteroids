@@ -4,9 +4,9 @@ public class Ship extends GameObject{
 
 	private final double SHIP_ANGLE_STEP = 0.02;
 	private final double SHIP_SPEED_STEP = 0.06;
-	private final double MAX_SHIP_SPEED  = 3;
 
 	private boolean alive;
+	private boolean invuln;
 
 	public Ship()
 	{
@@ -15,6 +15,7 @@ public class Ship extends GameObject{
 		objSprite.addPoint(7, 10);
 		objSprite.addPoint(-7, 10);
 		alive = true;
+		invuln = true;
 		this.friction = 0.995;
 	}
 
@@ -39,7 +40,6 @@ public class Ship extends GameObject{
 	}
 	public void moveBack()
 	{
-
 		double dx = SHIP_SPEED_STEP * -Math.sin(angle);
 		double dy = SHIP_SPEED_STEP *  Math.cos(angle);
 		xspeed -= dx;
@@ -48,4 +48,7 @@ public class Ship extends GameObject{
 
 	public boolean isAlive(){return alive;}
 	public void setAlive(boolean alive){this.alive = alive;}
+
+	public boolean isInvuln(){return invuln;}
+	public void setInvuln(boolean invuln){this.invuln = invuln;}
 }
