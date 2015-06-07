@@ -9,7 +9,7 @@ public class Asteroid extends GameObject{
 	static final double MIN_ROCK_SPEED =  0.66;
 	static final double MAX_ROCK_SPEED = 4.16*0.2;
 	static final double MAX_ROCK_SPIN  = 0.0223;
-	static final int MAX_SIZE_MULT  = 2;
+	public static int MAX_SIZE_MULT  = 2;
 
 	private int size;
 
@@ -52,7 +52,7 @@ public class Asteroid extends GameObject{
 	{
 		super();
 		
-		this.size = MAX_SIZE_MULT;
+		this.size = (int) (Math.random()*(MAX_SIZE_MULT))+1;
 		generateAsteroid();
 
 		/* Set random position */

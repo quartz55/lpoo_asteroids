@@ -15,7 +15,7 @@ public class Sprite
 		this.sprite = new Polygon();
 	}
 
-	public void draw(double x, double y, double angle, int width, int height, Graphics buffer) 
+	public void draw(double x, double y, double angle, int width, int height, Color fill, Color outline, Graphics buffer) 
 	{
 		this.sprite = new Polygon();
 		for (int i = 0; i < this.base.npoints; i++)
@@ -23,9 +23,9 @@ public class Sprite
 					(int) Math.round(this.base.ypoints[i] * Math.cos(angle) - this.base.xpoints[i] * Math.sin(angle)) + (int) Math.round(y) + height / 2);
 
 
-		buffer.setColor(Color.black);
+		buffer.setColor(fill);
 		buffer.fillPolygon(sprite);
-		buffer.setColor(Color.white);
+		buffer.setColor(outline);
 		buffer.drawPolygon(sprite);
 		buffer.drawLine(sprite.xpoints[sprite.npoints - 1], sprite.ypoints[sprite.npoints - 1],
 				sprite.xpoints[0], sprite.ypoints[0]);

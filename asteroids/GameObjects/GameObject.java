@@ -1,5 +1,6 @@
 package asteroids.GameObjects;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class GameObject 
@@ -60,10 +61,20 @@ public class GameObject
 
 		return wrapped;
 	}
+
+	public void draw(Graphics buffer, Color fill, Color outline)
+	{
+		this.objSprite.draw(x, y, angle, width, height, fill, outline, buffer);
+	}
+
+	public void draw(Graphics buffer, float alpha)
+	{
+		draw(buffer, new Color(0, 0, 0, alpha), new Color(1, 1, 1, alpha));
+	}
 	
 	public void draw(Graphics buffer)
 	{
-		this.objSprite.draw(x, y, angle, width, height, buffer);
+		draw(buffer, Color.BLACK, Color.WHITE);
 	}
 	
 	public boolean checkCollision(GameObject obj)

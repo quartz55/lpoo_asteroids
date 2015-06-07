@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import asteroids.Engine.InputEngine;
+
 public class main {
 	public static void main(String[] args)
 	{
@@ -14,13 +16,16 @@ public class main {
 		window.setResizable(false);
 		window.setLocationRelativeTo(null);
 
+		
+		window.getContentPane().add(InputEngine.getInstance());
+
 		GamePanel gp = new GamePanel();
 		window.getContentPane().add(gp, BorderLayout.CENTER);
 
 		window.setVisible(true);
-
-		gp.init();
 		
+		gp.init();
+
 		window.setVisible(false);
 		System.exit(0);
 	}

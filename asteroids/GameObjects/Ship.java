@@ -1,8 +1,10 @@
 package asteroids.GameObjects;
 
+import java.awt.Graphics;
+
 public class Ship extends GameObject{
 
-	private final double SHIP_ANGLE_STEP = 0.02;
+	private final double SHIP_ANGLE_STEP = 0.03;
 	private final double SHIP_SPEED_STEP = 0.06;
 
 	private boolean alive;
@@ -17,6 +19,13 @@ public class Ship extends GameObject{
 		alive = true;
 		invuln = true;
 		this.friction = 0.995;
+	}
+
+	@Override
+	public void draw(Graphics buffer) {
+		if (invuln)
+			super.draw(buffer, (float) 0.5);
+		else super.draw(buffer);
 	}
 
 	public void rotLeft()
