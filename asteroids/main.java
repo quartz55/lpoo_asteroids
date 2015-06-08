@@ -9,24 +9,15 @@ import asteroids.Engine.InputEngine;
 public class main {
 	public static void main(String[] args)
 	{
-		JFrame window = new JFrame();
-		window.setSize(800, 640);
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.getContentPane().setLayout(new BorderLayout(0, 0));
-		window.setResizable(false);
-		window.setLocationRelativeTo(null);
-
-		
-		window.getContentPane().add(InputEngine.getInstance());
-
 		GamePanel gp = new GamePanel();
-		window.getContentPane().add(gp, BorderLayout.CENTER);
-
-		window.setVisible(true);
+		GameWindow gw = new GameWindow(800, 640, gp);
 		
-		gp.init(window);
+		gw.open();
 
-		window.setVisible(false);
+		gp.init(gw.getWindow());
+		
+		gw.close();
+
 		System.exit(0);
 	}
 }
