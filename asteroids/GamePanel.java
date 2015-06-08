@@ -23,6 +23,11 @@ import asteroids.Managers.ParticleManager;
 import asteroids.Utils.HighScore;
 import asteroids.Engine.*;
 
+/**
+ * Main game class
+ * Contains all the game objects and the main game loop
+ * Is also responsible for drawing to the screen
+ */
 public class GamePanel extends JPanel{
 	static final int MS_PER_FRAME = 16;
 
@@ -55,9 +60,8 @@ public class GamePanel extends JPanel{
 	int lives;
 	boolean canFire = true;
 
-	// Off screen image.
-	Dimension offDimension;
-	Image offImage;
+	Image gImage;
+	Dimension dim;
 	Graphics doubleBuffer;
 
 	// Game Objects
@@ -68,7 +72,11 @@ public class GamePanel extends JPanel{
 
 	ParticleManager pm;
 
-	public void init(JFrame f) {
+	/**
+	 * Initializes all game parameters and runs the main game loop
+	 * @param f Parent JFrame
+	 */
+	public void start(JFrame f) {
 		parent_frame = f;
 		Dimension d = getSize();
 
@@ -77,10 +85,8 @@ public class GamePanel extends JPanel{
 
 		loadScores();
 
-		initGame();
+		newGame();
 		player.setAlive(false);
-
-		changeDifficulty();
 
 		loaded = true;
 
@@ -89,8 +95,7 @@ public class GamePanel extends JPanel{
 		saveScores();
 	}
 
-
-	private void initGame() {
+	private void newGame() {
 		currScore = 0;
 		lives = MAX_SHIPS;
 		MAX_ROCKS = MAX_ROCKS_DEFAULT;
@@ -116,6 +121,10 @@ public class GamePanel extends JPanel{
 		paused = false;
 	}
 
+	/**
+	 * Main game loop
+	 * Gets input, updates game objects and draws to screen
+	 */
 	public void run() {
 		long startTime = System.currentTimeMillis();
 
@@ -175,6 +184,7 @@ public class GamePanel extends JPanel{
 				if (canFire) {
 					canFire = false;
 					bullets_al.add(new Bullet(player.getX(), player.getY(), player.getAng()));
+					SoundEngine.getInstance().playSound("asteroids_shoot.wav");
 
 					Thread fireDelayThread = new Thread(){
 						public void run() {
@@ -189,10 +199,13 @@ public class GamePanel extends JPanel{
 
 		if (InputEngine.getInstance().checkInput('s') && !playing) {
 			firstStart = false;
-			initGame();
+			newGame();
 		}
 		if (InputEngine.getInstance().checkInput('p'))
 			if (playing) paused = !paused;
+
+		if (InputEngine.getInstance().checkInput('m'))
+			SoundEngine.getInstance().toggleMute();
 
 		if (InputEngine.getInstance().checkInput('h'))
 			showHelp();
@@ -206,16 +219,16 @@ public class GamePanel extends JPanel{
 		InputEngine.getInstance().clearInput();
 	}
 
-	public void paintComponent(java.awt.Graphics g){
+	public void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Dimension d = getSize();
 		int i;
 		String s;
 
-		if (doubleBuffer == null || d.width != offDimension.width || d.height != offDimension.height) {
-			offDimension = d;
-			offImage = createImage(d.width, d.height);
-			doubleBuffer = offImage.getGraphics();
+		if (doubleBuffer == null || d.width != dim.width || d.height != dim.height) {
+			dim = d;
+			gImage = createImage(d.width, d.height);
+			doubleBuffer = gImage.getGraphics();
 		}
 
 		// Clear screen
@@ -252,7 +265,6 @@ public class GamePanel extends JPanel{
 		doubleBuffer.setColor(Color.white);
 
 		doubleBuffer.drawString("Score: " + currScore, fontWidth, fontHeight + 20);
-		doubleBuffer.drawString(""+player.getY(), fontWidth, fontHeight + 40);
 
 		int highscore = (currScore > highScores.get(0).score) ? currScore : highScores.get(0).score;
 		doubleBuffer.drawString("Highscore: " + highscore, d.width - (fontWidth + fm.stringWidth("Highscore: " + highscore)), fontHeight + 20);
@@ -282,14 +294,13 @@ public class GamePanel extends JPanel{
 			// Draw difficulty
 			doubleBuffer.drawString("Difficulty: " + DIFFICULTY_NAMES[difficulty], fontWidth, d.height - 20);
 
-			doubleBuffer.drawString("Press 'H' for help", (d.width - fm.stringWidth("Press 'H' for help") - fontWidth) , d.height - 20 * 3);
-			doubleBuffer.drawString("Press 'O' for options", (d.width - fm.stringWidth("Press 'O' for options") - fontWidth) , d.height - 20 * 2);
+			doubleBuffer.drawString("Press 'H' for help", (d.width - fm.stringWidth("Press 'H' for help") - fontWidth) , d.height - 20 * 2);
 			doubleBuffer.drawString("Press 'Q' to quit", (d.width - fm.stringWidth("Press 'Q' to quit") - fontWidth) , d.height - 20);
 
 		}
 
-		// Display buffer
-		g.drawImage(offImage, 0, 0, this);
+		// Draw final image on screen
+		g.drawImage(gImage, 0, 0, this);
 	}
 
 	private void changeDifficulty() {
@@ -362,6 +373,7 @@ public class GamePanel extends JPanel{
 	}
 
 	private void asteroidExplosion(Asteroid a, int i) {
+		SoundEngine.getInstance().playSound("asteroids_explosion.wav");
 		int temp_size = a.getSize() - 1;
 		double temp_x = a.getX();
 		double temp_y = a.getY();
@@ -443,8 +455,8 @@ public class GamePanel extends JPanel{
 		paused = true;
 		Thread t = new Thread(new Runnable(){
 			public void run() {
-		JOptionPane.showMessageDialog(parent_frame,
-				"Help:\n\n"
+		JOptionPane.showMessageDialog(parent_frame, ""
+				+ "Help:\n\n"
 				+ "The main objective of the game is to avoid the moving asteroids while also destroying them\n"
 				+ "     - You can only move the ship forward or backwards and steer it to the left or right\n"
 				+ "     - Normal and big asteroids transform into two smaller asteroids when shot\n"
@@ -455,7 +467,8 @@ public class GamePanel extends JPanel{
 				+ "ARROW KEYS: Steer and move ship\n"
 				+ "SPACE: Shoot\n"
 				+ "P: Pause game\n"
-				+ "O: Options screen\n"
+				+ "O: Change difficulty\n"
+				+ "M: Toggle mute\n"
 				+ "H: Show this screen\n"
 				+ "Q: Quit the game");
 		InputEngine.getInstance().clearBools();
@@ -497,6 +510,11 @@ public class GamePanel extends JPanel{
 	/*
 	 * For testing purposes
 	 */
+
+	/**
+	 * Initializes game parameters for testing purposes
+	 * @param f Parent JFrame
+	 */
 	public void initTest(JFrame f) {
 		testing = true;
 		parent_frame = f;
@@ -507,14 +525,23 @@ public class GamePanel extends JPanel{
 
 		firstStart = false;
 		loadScores();
-		initGame();
+		newGame();
 		player.setAlive(true);
 
 		loaded = true;
 	}
+	/**
+	 * Removes all the asteroids
+	 */
 	public void removeAsteroids() {
 		asteroids_al = new ArrayList<Asteroid>();
 	}
+	/**
+	 * Adds an asteroid to the game
+	 * @param x Asteroid's X position
+	 * @param y Asteroid's Y position
+	 * @param size Asteroid's size
+	 */
 	public void addAsteroid(double x, double y, int size) {
 		Asteroid test = new Asteroid(size, x, y);
 		test.setYspeed(0);
@@ -522,12 +549,34 @@ public class GamePanel extends JPanel{
 		asteroids_al.add(test);
 	}
 
+	/**
+	 * @return How many lives left
+	 */
 	public int getLives() { return lives; }
+	/**
+	 * Sets lives left to the specified one
+	 * @param l
+	 */
 	public void setLives(int l) {this.lives = l;}
+	/**
+	 * @return TRUE if game is currently paused FALSE if not
+	 */
 	public boolean gameIsOn() { return playing; }
+	/**
+	 * @return TRUE if game is currently paused FALSE if not
+	 */
 	public boolean gameIsPaused() { return paused; }
+	/**
+	 * @return Game's player (Ship)
+	 */
 	public Ship getPlayer() {return player; }
+	/**
+	 * @return Game's list of asteroids
+	 */
 	public ArrayList<Asteroid> getAsteroids() {return asteroids_al; }
+	/**
+	 * @return Game's list of bullets
+	 */
 	public ArrayList<Bullet> getBullets() {return bullets_al; }
 
 }

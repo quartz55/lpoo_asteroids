@@ -1,7 +1,17 @@
 package asteroids.GameObjects;
 
+/**
+ * Class to represent a Star in the game world
+ * NOTE: Extends GameObject
+ */
 public class Star extends GameObject{
 
+	/**
+	 * Default constructor
+	 * Creates a star in the specified position
+	 * @param x Star's X position
+	 * @param y Star's Y position
+	 */
 	public Star(double x, double y)
 	{
 		super();

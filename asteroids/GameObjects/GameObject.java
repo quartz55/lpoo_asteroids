@@ -90,7 +90,7 @@ public class GameObject
 
 	/**
 	 * Draws the Sprite of the game object with the provided alpha to the specified buffer
-	 * @note Default color is BLACK for fill and WHITE for outline
+	 * NOTE: Default color is BLACK for fill and WHITE for outline
 	 * @param buffer Buffer to draw to
 	 * @param alpha Sprite alpha
 	 */
@@ -101,7 +101,7 @@ public class GameObject
 
 	/**
 	 * Draws the Sprite of the game object to the specified buffer
-	 * @note Default color is BLACK for fill and WHITE for outline
+	 * NOTE: Default color is BLACK for fill and WHITE for outline
 	 * @param buffer
 	 */
 	public void draw(Graphics buffer)

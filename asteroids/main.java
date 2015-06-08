@@ -14,7 +14,7 @@ public class main {
 		
 		gw.open();
 
-		gp.init(gw.getWindow());
+		gp.start(gw.getWindow());
 		
 		gw.close();
 

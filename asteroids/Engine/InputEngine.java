@@ -6,7 +6,9 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-@SuppressWarnings("serial")
+/**
+ * Singleton class responsible for the game input system
+ */
 public class InputEngine extends JPanel{
 
 	private static InputEngine instance = null;
@@ -34,14 +36,22 @@ public class InputEngine extends JPanel{
 		setFocusable(true);
 	}
 
-	public static InputEngine getInstance()
+	/**
+	 * Returns the Singleton instance
+	 * NOTE: Creates one if it doesn't exist yet
+	 * @return Singleton instance
+	 */
+	public synchronized static InputEngine getInstance()
 	{
 		if(instance == null){
 			instance = new InputEngine();
 		}
 		return instance;
 	}
-	
+
+	/**
+	 * Changes all the key states to FALSE
+	 */
 	public void clearBools() {
 		KEY_UP = false;
 		KEY_DOWN = false;
@@ -49,11 +59,21 @@ public class InputEngine extends JPanel{
 		KEY_RIGHT = false;
 		KEY_SPACE = false;
 	}
-	
+
+	/**
+	 * Adds "artificial" input to the engine
+	 * NOTE: Mostly used for testing purposes
+	 * @param c Character code to add
+	 */
 	public void addInput(char c) {
 		inputQueue.add(c);
 	}
 
+	/**
+	 * Checks the current frame input queue for the character code
+	 * @param c Character code to check
+	 * @return TRUE if the code is present in the queue FALSE if not
+	 */
 	public boolean checkInput(char c) {
 		for (int i = 0; i < inputQueue.size(); i++) {
 			if (c == inputQueue.get(i)) {
@@ -62,7 +82,10 @@ public class InputEngine extends JPanel{
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Clears the engine's input queue
+	 */
 	public void clearInput() {
 		inputQueue = new ArrayList<Character>();
 	}

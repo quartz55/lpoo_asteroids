@@ -4,18 +4,37 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Polygon;
 
-public class Sprite 
+/**
+ * Class used to represent a game object on screen
+ * Is also used to check for collisions
+ */
+public class Sprite
 {
 	private Polygon base;
-	private Polygon sprite;	
+	private Polygon sprite;
 
+	/**
+	 * Default construtor
+	 * Initalizes both Polygons
+	 */
 	public Sprite()
 	{
 		this.base = new Polygon();
 		this.sprite = new Polygon();
 	}
 
-	public void draw(double x, double y, double angle, int width, int height, Color fill, Color outline, Graphics buffer) 
+	/**
+	 * Draws polygon on buffer provided
+	 * @param x X position to draw polygon on
+	 * @param y Y position to draw polygon on
+	 * @param angle angle to draw polygon on
+	 * @param width Screen width
+	 * @param height Screen height
+	 * @param fill Fill color
+	 * @param outline Outline color
+	 * @param buffer Buffer to draw on
+	 */
+	public void draw(double x, double y, double angle, int width, int height, Color fill, Color outline, Graphics buffer)
 	{
 		this.sprite = new Polygon();
 		for (int i = 0; i < this.base.npoints; i++)
@@ -32,7 +51,12 @@ public class Sprite
 
 	}
 
-	public boolean isColliding(Sprite s) 
+	/**
+	 * Checks if current sprite is colliding with another
+	 * @param s Sprite to check
+	 * @return TRUE if colliding FALSE if not
+	 */
+	public boolean isColliding(Sprite s)
 	{
 		for (int i = 0; i < s.sprite.npoints; i++)
 			if (this.sprite.contains(s.sprite.xpoints[i], s.sprite.ypoints[i]))
@@ -43,10 +67,17 @@ public class Sprite
 		return false;
 	}
 
+	/**
+	 * @return Sprite's polygon
+	 */
 	public Polygon getSprite(){ return sprite; }
 
-	public void addPoint(int x, int y)
-	{
+	/**
+	 * Adds a point to the Sprite's base polygon
+	 * @param x Point's X position
+	 * @param y Point's Y position
+	 */
+	public void addPoint(int x, int y) {
 		this.base.addPoint(x, y);
 	}
 }
