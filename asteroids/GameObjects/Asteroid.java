@@ -6,9 +6,9 @@ public class Asteroid extends GameObject{
 	static final int    MAX_ROCK_SIDES =  16;
 	static final int    MIN_ROCK_SIZE  =  10;
 	static final int    MAX_ROCK_SIZE  =  20;
-	static final double MIN_ROCK_SPEED =  0.66;
-	static final double MAX_ROCK_SPEED = 4.16*0.2;
-	static final double MAX_ROCK_SPIN  = 0.0223;
+	static final double MIN_ROCK_SPEED =  1.32;
+	static final double MAX_ROCK_SPEED = 1.664;
+	static final double MAX_ROCK_SPIN  = 0.0446;
 	public static int MAX_SIZE_MULT  = 2;
 
 	private int size;

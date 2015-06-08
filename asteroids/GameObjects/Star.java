@@ -10,7 +10,7 @@ public class Star extends GameObject{
 		this.x = x;
 		this.y = y;
 
-		this.xspeed = Math.random() * 0.02 - 0.01;
-		this.yspeed = Math.random() * 0.02 - 0.01;
+		this.xspeed = Math.random() * 0.04 - 0.02;
+		this.yspeed = Math.random() * 0.04 - 0.02;
 	}
 }

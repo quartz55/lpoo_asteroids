@@ -24,7 +24,7 @@ public class main {
 
 		window.setVisible(true);
 		
-		gp.init();
+		gp.init(window);
 
 		window.setVisible(false);
 		System.exit(0);

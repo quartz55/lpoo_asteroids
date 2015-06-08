@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -23,28 +24,30 @@ import asteroids.Utils.HighScore;
 import asteroids.Engine.*;
 
 public class GamePanel extends JPanel{
-	static final int MS_PER_FRAME = 8;
+	static final int MS_PER_FRAME = 16;
 
 	static final int MAX_ROCKS_DEFAULT = 8;
 	static int MAX_ROCKS = 8;
 
-	static final int MAX_SHIPS = 1;
+	static final int MAX_SHIPS = 3;
 	static final long FIRE_DELAY = 200;
 
 	static final int[] DIFFICULTY_LEVELS = {2, 3, 5};
 	static final String[] DIFFICULTY_NAMES = {"Easy", "Medium", "Hard"};
 	static final int[] POINTS = {0, 25, 50, 75, 150};
+	
+	JFrame parent_frame;
 
 	// Game data.
-	int score;
+	int currScore;
 	ArrayList<HighScore> highScores;
-	int difficulty = 2;
+	int difficulty = 1;
 
-	// Flags for game state and options.
+	// Flags for game state
 	boolean firstStart = true;
 	boolean done = false;
-	boolean paused;
-	boolean playing;
+	boolean paused = false;
+	public boolean playing = false;
 	boolean loaded = false;
 
 	// Ship data.
@@ -58,14 +61,15 @@ public class GamePanel extends JPanel{
 
 
 	// Game Objects
-	Ship player;
-	ArrayList<Asteroid> asteroids_al;
-	ArrayList<Bullet> bullets_al;
-	ArrayList<Star> stars_al;
+	public Ship player;
+	public ArrayList<Asteroid> asteroids_al;
+	public ArrayList<Bullet> bullets_al;
+	public ArrayList<Star> stars_al;
 
 	ParticleManager pm;
 
-	public void init() {
+	public void init(JFrame f) {
+		parent_frame = f;
 		Dimension d = getSize();
 
 		GameObject.width = d.width;
@@ -85,8 +89,19 @@ public class GamePanel extends JPanel{
 		saveScores();
 	}
 
+	public void initTest(int width, int height) {
+		GameObject.width = width;
+		GameObject.height = height;
+
+		firstStart = false;
+		initGame();
+		player.setAlive(true);
+		
+		loaded = true;
+	}
+
 	private void initGame() {
-		score = 0;
+		currScore = 0;
 		lives = MAX_SHIPS;
 		MAX_ROCKS = MAX_ROCKS_DEFAULT;
 		Asteroid.MAX_SIZE_MULT = DIFFICULTY_LEVELS[difficulty];
@@ -103,6 +118,8 @@ public class GamePanel extends JPanel{
 			double y = Math.random()*d.height - d.height/2;
 			stars_al.add(new Star(x, y));
 		}
+		
+		InputEngine.getInstance().clearBools();
 
 		if (!firstStart)
 			playing = true;
@@ -112,27 +129,36 @@ public class GamePanel extends JPanel{
 	private void gameOver() {
 		playing = false;
 
-		JFrame frame = new JFrame("Player name");
-		String name = JOptionPane.showInputDialog(frame, "Game over!\nWhat's your name?");
+		// Get player name for scoreboard
+		Thread t = new Thread(new Runnable() {
+			public void run(){
 
-		if (name == null || name.length() == 0)
-			name = "John Doe";
+				String name = JOptionPane.showInputDialog(parent_frame, "Game over!\nWhat's your name?");
 
-		for (int i = 0; i < highScores.size(); i++) {
-			if (score > highScores.get(i).score) {
-				highScores.add(i, new HighScore(name, score));
-				highScores.remove(highScores.size()-1);
-				break;
+				if (name == null || name.length() == 0)
+					name = "John Doe";
+
+				for (int i = 0; i < highScores.size(); i++) {
+					if (currScore > highScores.get(i).score) {
+						highScores.add(i, new HighScore(name, currScore));
+						highScores.remove(highScores.size()-1);
+						break;
+					}
+				}
 			}
-		}
+		});
+		t.start();
 	}
 
-	private void run() {
+	public void run() {
 		long startTime = System.currentTimeMillis();
 
 		// Main game loop
 		while (!done) {
+			// Input
 			getInput();
+			
+			// Update
 			if (!paused) {
 				for (int i = 0; i < stars_al.size(); i++) stars_al.get(i).update();
 				pm.update();
@@ -141,8 +167,10 @@ public class GamePanel extends JPanel{
 				if (player.isAlive()) player.update();
 			}
 
+			// Draw
 			repaint();
 
+			// Wait
 			try {
 				long currTime = System.currentTimeMillis();
 				startTime += MS_PER_FRAME;
@@ -165,7 +193,7 @@ public class GamePanel extends JPanel{
 						player.getY(),
 						Math.sin(player.getAng()+Math.random()*1 - 0.5),
 						-Math.cos(player.getAng()+Math.random()*1 - 0.5), 
-						1);
+						2);
 				player.moveFwd();
 			}
 			else if (InputEngine.getInstance().KEY_DOWN) {
@@ -174,7 +202,7 @@ public class GamePanel extends JPanel{
 						player.getY(),
 						-Math.sin(player.getAng()+Math.random()*1 - 0.5),
 						Math.cos(player.getAng()+Math.random()*1 - 0.5), 
-						1);
+						2);
 				player.moveBack();
 			}
 			if (InputEngine.getInstance().KEY_SPACE) {
@@ -199,6 +227,13 @@ public class GamePanel extends JPanel{
 		}
 		if (InputEngine.getInstance().checkInput('p'))
 			if (playing) paused = !paused;
+
+		if (InputEngine.getInstance().checkInput('h'))
+			showHelp();
+
+		if (InputEngine.getInstance().checkInput('o') && !playing)
+			changeDifficulty();
+
 		if (InputEngine.getInstance().checkInput('q'))
 			done = true;
 
@@ -287,7 +322,7 @@ public class GamePanel extends JPanel{
 
 			for (int j = 0; j < bullets_al.size(); j++) {
 				if (asteroids_al.get(i).checkCollision(bullets_al.get(j))) {
-					score += POINTS[Math.min(asteroids_al.get(i).getSize(), POINTS.length-1)];
+					currScore += POINTS[Math.min(asteroids_al.get(i).getSize(), POINTS.length-1)];
 
 					asteroidExplosion(asteroids_al.get(i), i);
 					asteroids_al.remove(i);
@@ -347,15 +382,17 @@ public class GamePanel extends JPanel{
 		doubleBuffer.setFont(font);
 		doubleBuffer.setColor(Color.white);
 
-		doubleBuffer.drawString("Score: " + score, fontWidth, fontHeight + 20);
+		doubleBuffer.drawString("Score: " + currScore, fontWidth, fontHeight + 20);
+		doubleBuffer.drawString(""+player.getY(), fontWidth, fontHeight + 40);
 		
-		int highscore = (score > highScores.get(0).score) ? score : highScores.get(0).score;
+		int highscore = (currScore > highScores.get(0).score) ? currScore : highScores.get(0).score;
 		doubleBuffer.drawString("Highscore: " + highscore, d.width - (fontWidth + fm.stringWidth("Highscore: " + highscore)), fontHeight + 20);
 		if (playing) {
 			doubleBuffer.drawString("Lives: " + lives, fontWidth, d.height - 20);
 			if (paused) {
 				s = "Game Paused";
 				doubleBuffer.drawString(s, (d.width - fm.stringWidth(s)) / 2, d.height / 4);
+				doubleBuffer.drawString("Press 'H' for help", (d.width - fm.stringWidth("Press 'H' for help") - fontWidth) , d.height - 20);
 			}
 		}
 		else if (!playing) {
@@ -369,12 +406,16 @@ public class GamePanel extends JPanel{
 			doubleBuffer.drawString( s, (d.width - fm.stringWidth(s)) / 2, d.height / 2 + fontHeight);
 
 			// Draw highscores
-			doubleBuffer.drawString("Highscores", (d.width - fm.stringWidth(s)) / 2, d.height / 2 + fontHeight + 50);
+			doubleBuffer.drawString("Highscores", (d.width - fm.stringWidth("Highscores")) / 2, d.height / 2 + fontHeight + 50);
 			for (i = 0; i < highScores.size(); i++)
 				doubleBuffer.drawString("" + (i+1) + ". " + highScores.get(i).name + " : " + highScores.get(i).score, (d.width - fm.stringWidth(s)) / 2, d.height / 2 + fontHeight + 50 + fontHeight*(i+1));
 			
 			// Draw difficulty
 			doubleBuffer.drawString("Difficulty: " + DIFFICULTY_NAMES[difficulty], fontWidth, d.height - 20);
+
+			doubleBuffer.drawString("Press 'H' for help", (d.width - fm.stringWidth("Press 'H' for help") - fontWidth) , d.height - 20 * 3);
+			doubleBuffer.drawString("Press 'O' for options", (d.width - fm.stringWidth("Press 'O' for options") - fontWidth) , d.height - 20 * 2);
+			doubleBuffer.drawString("Press 'Q' to quit", (d.width - fm.stringWidth("Press 'Q' to quit") - fontWidth) , d.height - 20);
 
 		}
 
@@ -383,19 +424,50 @@ public class GamePanel extends JPanel{
 	}
 	
 	private void changeDifficulty() {
-		JFrame frame = new JFrame("Difficulty");
-		String diff = (String) JOptionPane.showInputDialog(frame, "Choose game difficulty", "Difficulty", JOptionPane.QUESTION_MESSAGE, null, DIFFICULTY_NAMES, DIFFICULTY_NAMES[0]);
+		Thread t = new Thread(new Runnable(){
+			public void run() {
+				String diff = (String) JOptionPane.showInputDialog(parent_frame, "Choose game difficulty", "Difficulty", JOptionPane.QUESTION_MESSAGE, null, DIFFICULTY_NAMES, DIFFICULTY_NAMES[difficulty]);
 
-		switch (diff) {
-		case "Easy":
-			difficulty = 0; break;
-		case "Medium":
-			difficulty = 1; break;
-		case "Hard":
-			difficulty = 2; break;
-		default:
-			difficulty = 0; break;
-		}
+				switch (diff) {
+				case "Easy":
+					difficulty = 0; break;
+				case "Medium":
+					difficulty = 1; break;
+				case "Hard":
+					difficulty = 2; break;
+				default:
+					difficulty = 0; break;
+				}
+			}
+		});
+		t.start();
+	}
+
+	private void showHelp() {
+		boolean wasPaused = paused;
+		paused = true;
+		Thread t = new Thread(new Runnable(){
+			public void run() {
+		JOptionPane.showMessageDialog(parent_frame,
+				"Help:\n\n"
+				+ "The main objective of the game is to avoid the moving asteroids while also destroying them\n"
+				+ "     - You can only move the ship forward or backwards and steer it to the left or right\n"
+				+ "     - Normal and big asteroids transform into two smaller asteroids when shot\n"
+				+ "     - The bigger the asteroid, the more points it gives when destroyed\n"
+				+ "\n\n"
+				+ "Controls:\n\n"
+				+ "S: (Re)Start game\n"
+				+ "ARROW KEYS: Steer and move ship\n"
+				+ "SPACE: Shoot\n"
+				+ "P: Pause game\n"
+				+ "O: Options screen\n"
+				+ "H: Show this screen\n"
+				+ "Q: Quit the game");
+		InputEngine.getInstance().clearBools();
+		paused = wasPaused;
+			}
+		});
+		t.start();
 	}
 
 	private void saveScores() {

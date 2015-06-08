@@ -86,7 +86,9 @@ public class GameObject
 	
 	public double getX(){return x;}
 	public double getY(){return y;}
+	public void setY(double Y){this.y = Y;}
 	public double getAng(){return angle;}
+	public void setAng(double ang){this.angle = ang;}
 	public double getXspeed(){return xspeed;}
 	public double getYspeed(){return yspeed;}
 }

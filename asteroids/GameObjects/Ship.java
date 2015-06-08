@@ -4,8 +4,8 @@ import java.awt.Graphics;
 
 public class Ship extends GameObject{
 
-	private final double SHIP_ANGLE_STEP = 0.03;
-	private final double SHIP_SPEED_STEP = 0.06;
+	private final double SHIP_ANGLE_STEP = 0.06;
+	private final double SHIP_SPEED_STEP = 0.12;
 
 	private boolean alive;
 	private boolean invuln;
@@ -18,13 +18,13 @@ public class Ship extends GameObject{
 		objSprite.addPoint(-7, 10);
 		alive = true;
 		invuln = true;
-		this.friction = 0.995;
+		this.friction = 0.9975;
 	}
 
 	@Override
 	public void draw(Graphics buffer) {
 		if (invuln)
-			super.draw(buffer, (float) 0.5);
+			super.draw(buffer, (Math.random() > 0.5 ? (float) 0.1 : 1));
 		else super.draw(buffer);
 	}
 

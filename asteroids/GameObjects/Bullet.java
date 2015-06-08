@@ -2,7 +2,7 @@ package asteroids.GameObjects;
 
 public class Bullet extends GameObject{
 	
-	public static final double BULLET_SPEED = 3;
+	public static final double BULLET_SPEED = 6;
 
 	public Bullet(double x, double y, double plAng)
 	{

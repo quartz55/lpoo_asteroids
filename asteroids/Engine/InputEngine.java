@@ -42,6 +42,14 @@ public class InputEngine extends JPanel{
 		return instance;
 	}
 	
+	public void clearBools() {
+		KEY_UP = false;
+		KEY_DOWN = false;
+		KEY_LEFT = false;
+		KEY_RIGHT = false;
+		KEY_SPACE = false;
+	}
+	
 	public void addInput(char c) {
 		inputQueue.add(c);
 	}
