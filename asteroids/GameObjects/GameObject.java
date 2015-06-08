@@ -102,7 +102,7 @@ public class GameObject
 	/**
 	 * Draws the Sprite of the game object to the specified buffer
 	 * NOTE: Default color is BLACK for fill and WHITE for outline
-	 * @param buffer
+	 * @param buffer Buffer to draw on
 	 */
 	public void draw(Graphics buffer)
 	{
@@ -134,7 +134,7 @@ public class GameObject
 	public double getY(){return y;}
 	/**
 	 * Sets the current game object's Y position to the specified one
-	 * @param Y
+	 * @param Y New Y position
 	 */
 	public void setY(double Y){this.y = Y;}
 	/**
@@ -143,7 +143,7 @@ public class GameObject
 	public double getAng(){return angle;}
 	/**
 	 * Sets the current game object's angle to the specified one
-	 * @param ang
+	 * @param ang New angle
 	 */
 	public void setAng(double ang){this.angle = ang;}
 	/**
@@ -152,7 +152,7 @@ public class GameObject
 	public double getXspeed(){return xspeed;}
 	/**
 	 * Sets the current game object's X velocity to the specified one
-	 * @param xsp
+	 * @param xsp New X velocity
 	 */
 	public void setXspeed(double xsp){this.xspeed = xsp;}
 	/**
@@ -161,7 +161,7 @@ public class GameObject
 	public double getYspeed(){return yspeed;}
 	/**
 	 * Sets the current game object's Y velocity to the specified one
-	 * @param ysp
+	 * @param ysp New Y velocity
 	 */
 	public void setYspeed(double ysp){this.yspeed = ysp;}
 }

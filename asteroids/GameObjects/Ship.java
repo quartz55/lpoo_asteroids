@@ -78,7 +78,7 @@ public class Ship extends GameObject{
 	public boolean isAlive(){return alive;}
 	/**
 	 * Sets the ship's alive value to the specified one
-	 * @param alive
+	 * @param alive New alive value
 	 */
 	public void setAlive(boolean alive){this.alive = alive;}
 	/**
@@ -87,7 +87,7 @@ public class Ship extends GameObject{
 	public boolean isInvuln(){return invuln;}
 	/**
 	 * Sets the ship's invulnerability value to the specified one
-	 * @param invuln
+	 * @param invuln New invuln value
 	 */
 	public void setInvuln(boolean invuln){this.invuln = invuln;}
 }

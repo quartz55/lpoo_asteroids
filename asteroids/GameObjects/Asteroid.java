@@ -30,7 +30,7 @@ public class Asteroid extends GameObject{
 	/**
 	 * Size constructor
 	 * Generates an asteroid with the specified size
-	 * @param size
+	 * @param size Asteroid size
 	 */
 	public Asteroid(int size) {
 		super();
@@ -56,9 +56,9 @@ public class Asteroid extends GameObject{
 	/**
 	 * Specific constructor
 	 * Generates an asteroid with the specified size and X and Y positions
-	 * @param size
-	 * @param x
-	 * @param y
+	 * @param size Asteroid size
+	 * @param x Asteroid X position
+	 * @param y Asteroid Y position
 	 */
 	public Asteroid(int size, double x, double y) {
 		super();
@@ -72,8 +72,7 @@ public class Asteroid extends GameObject{
 
 	}
 
-	private void generateAsteroid()
-	{
+	private void generateAsteroid() {
 		int s;
 		double theta, r;
 		int point_x, point_y;

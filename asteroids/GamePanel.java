@@ -555,7 +555,7 @@ public class GamePanel extends JPanel{
 	public int getLives() { return lives; }
 	/**
 	 * Sets lives left to the specified one
-	 * @param l
+	 * @param l New lives value
 	 */
 	public void setLives(int l) {this.lives = l;}
 	/**
